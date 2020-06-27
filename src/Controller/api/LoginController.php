@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\UserRepository;
+use \Firebase\JWT\JWT;
 
 class LoginController extends AbstractController
 {
@@ -30,7 +31,18 @@ class LoginController extends AbstractController
         }
 
         if ($user->getPassword() == $password) {
-            return new Response('Welcome');
+            $key = '%env(JWT_PASSPHRASE)%';
+            $payload = array(
+                'iss' => '%env(URI)',
+                'aud' => '%env(URI)',
+                'iat' => time(),
+                'nbf' => time() + 10,
+                'exp' => time() + 3600,
+            );
+
+            $jwt = JWT::encode($payload, $key);
+
+            return new Response($this->json($jwt));
         } else {
             return new Response('Password is incorrect.', Response::HTTP_UNAUTHORIZED);
         }
