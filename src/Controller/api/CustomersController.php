@@ -25,10 +25,9 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/create", name="create_customer")
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $request = Request::createFromGlobals();
 
         $company = $request->request->get('company');
         $firstname = $request->request->get('firstname');
