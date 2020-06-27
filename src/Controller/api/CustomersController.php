@@ -80,4 +80,36 @@ class CustomersController extends AbstractController
 
         return new Response("Customer ID {$customer->getId()} has been updated.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
+
+    /**
+     * @Route("/customers/list", name="list_customers")
+     */
+    public function list(CustomerRepository $customerRepository)
+    {
+        $customers = $customerRepository->findAll();
+
+        if (!$customers) {
+            throw $this->createNotFoundException(
+                'No customers found'
+            );
+        }
+
+        return new Response($this->json($customers));
+    }
+
+    /**
+     * @Route("/customers/list/{id}", name="show_customer")
+     */
+    public function list_by_id($id, CustomerRepository $customerRepository): Response
+    {
+        $customer = $customerRepository->find($id);
+
+        if (!$customer) {
+            throw $this->createNotFoundException(
+                'No customer found for id ' . $id
+            );
+        }
+
+        return new Response($this->json($customer));
+    }
 }
