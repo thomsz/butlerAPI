@@ -138,4 +138,32 @@ class CustomersController extends AbstractController
 
         return new Response($this->json($customer));
     }
+
+    /**
+     * @Route("/customers/delete", name="delete_customer")
+     */
+    public function delete(CustomerRepository $customerRepository, Request $request): Response
+    {
+        $customer = json_decode($request->getContent());
+
+        if ($id = $customer->id ?? false) {
+            $customer = $customerRepository->find($id);
+        } else if ($email = $customer->email ?? false) {
+            $customer = $customerRepository->findOneByEmail($email);
+        }
+
+        if (!$customer) {
+            throw $this->createNotFoundException(
+                'No customer found.'
+            );
+        }
+
+        $id = $customer->getId();
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($customer);
+        $entityManager->flush();
+
+        return new Response("Customer {$id} has been deleted.");
+    }
 }
