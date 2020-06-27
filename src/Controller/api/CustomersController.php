@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Customer;
+use App\Repository\CustomerRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,5 +58,26 @@ class CustomersController extends AbstractController
         $entityManager->flush();
 
         return new Response("New customer ID {$customer->getId()} has been created.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/customers/update/{id}", name="update_customer")
+     */
+    public function update($id, CustomerRepository $customerRepository): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $customer = $customerRepository->find($id);
+
+        if (!$customer) {
+            throw $this->createNotFoundException(
+                'No customer found for id ' . $id
+            );
+        }
+
+        $customer->setFirstname('Mark');
+
+        $entityManager->flush();
+
+        return new Response("Customer ID {$customer->getId()} has been updated.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 }
