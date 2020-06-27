@@ -38,6 +38,7 @@ class LoginController extends AbstractController
                 'iat' => time(),
                 'nbf' => time() + 10,
                 'exp' => time() + 3600,
+                'username' => $username,
             );
 
             $jwt = JWT::encode($payload, $key);
