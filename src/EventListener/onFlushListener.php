@@ -4,18 +4,17 @@ namespace App\EventListener;
 
 use App\Entity\Customer;
 use App\Entity\Tracker;
-use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Symfony\Component\Serializer;
 
 class FlushListener
 {
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(Event\OnFlushEventArgs $args)
     {
 
         $entityManager = $args->getEntityManager();
         $unitOfWork = $entityManager->getUnitOfWork();
-
-        foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
-        }
 
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
             if ($entity instanceof Customer) {
@@ -26,7 +25,7 @@ class FlushListener
                 $tracker->setTime(new \Datetime());
 
                 $entityManager->persist($tracker);
-                $metaData = $entityManager->getClassMetadata('App\Entity\tracker');
+                $metaData = $entityManager->getClassMetadata('App\Entity\Tracker');
                 $unitOfWork->computeChangeSet($metaData, $tracker);
             }
         }
@@ -53,9 +52,32 @@ class FlushListener
                 $tracker->setTime(new \Datetime());
 
                 $entityManager->persist($tracker);
-                $metaData = $entityManager->getClassMetadata('App\Entity\tracker');
+                $metaData = $entityManager->getClassMetadata('App\Entity\Tracker');
                 $unitOfWork->computeChangeSet($metaData, $tracker);
             }
+        }
+    }
+
+    public function postPersist(LifecycleEventArgs $args)
+    {
+        $entity = $args->getEntity();
+
+        if ($entity instanceof Customer) {
+            $normalizer = [new Serializer\Normalizer\ObjectNormalizer()];
+            $serializer = new Serializer\Serializer($normalizer);
+
+            $entityManager = $args->getObjectManager();
+
+            $customer = $entityManager->getRepository('App:Customer')->find($entity->getId());
+
+            $tracker = new Tracker();
+            $tracker->setUserID($entity->getId());
+            $tracker->setChange('create');
+            $tracker->setContent([$serializer->normalize($customer, null)]);
+            $tracker->setTime(new \Datetime());
+
+            $entityManager->persist($tracker);
+            $entityManager->flush();
         }
     }
 }
