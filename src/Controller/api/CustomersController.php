@@ -8,6 +8,9 @@ use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 class CustomersController extends AbstractController
 {
@@ -25,30 +28,30 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/create", name="create_customer")
      */
-    public function create(Request $request): Response
+    public function create(Request $request, ValidatorInterface $validator): Response
     {
+        $newCustomer = json_decode($request->getContent());
         $entityManager = $this->getDoctrine()->getManager();
 
-        $company = $request->request->get('company');
-        $firstname = $request->request->get('firstname');
-        $lastname = $request->request->get('lastname');
-        $street = $request->request->get('street');
-        $zip = $request->request->get('zip');
-        $city = $request->request->get('city');
-        $country = $request->request->get('country');
-        $phone = $request->request->get('phone');
-        $email = $request->request->get('email');
-
         $customer = new Customer();
-        $customer->setCompany($company);
-        $customer->setFirstname($firstname);
-        $customer->setLastname($lastname);
-        $customer->setStreet($street);
-        $customer->setZip($zip);
-        $customer->setCity($city);
-        $customer->setCountry($country);
-        $customer->setPhone($phone);
-        $customer->setEmail($email);
+        $customer->setCompany($newCustomer->company);
+        $customer->setFirstname($newCustomer->firstname);
+        $customer->setLastname($newCustomer->lastname);
+        $customer->setStreet($newCustomer->street);
+        $customer->setZip($newCustomer->zip);
+        $customer->setCity($newCustomer->city);
+        $customer->setCountry($newCustomer->country);
+        $customer->setPhone($newCustomer->phone);
+        $customer->setEmail($newCustomer->email);
+
+        // Validation
+        $errors = $validator->validate($customer);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new Response($errorsString, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
+        }
 
         // Stage query
         $entityManager->persist($customer);
@@ -56,13 +59,13 @@ class CustomersController extends AbstractController
         // Execute query 
         $entityManager->flush();
 
-        return new Response("New customer ID {$customer->getId()} has been created.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        return new Response("New customer ID {$customer->getId()} has been created.", Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 
     /**
      * @Route("/customers/update/{id}", name="update_customer")
      */
-    public function update($id, CustomerRepository $customerRepository, Request $request): Response
+    public function update($id, CustomerRepository $customerRepository, Request $request, ValidatorInterface $validator): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $customer = $customerRepository->find($id);
@@ -73,44 +76,36 @@ class CustomersController extends AbstractController
             );
         }
 
-        $company = $request->request->get('company');
-        $firstname = $request->request->get('firstname');
-        $lastname = $request->request->get('lastname');
-        $street = $request->request->get('street');
-        $zip = $request->request->get('zip');
-        $city = $request->request->get('city');
-        $country = $request->request->get('country');
-        $phone = $request->request->get('phone');
-        $email = $request->request->get('email');
+        $updatedCustomer = json_decode($request->getContent());
 
-        if (!is_null($company))
-            $customer->setCompany($company);
-        if (!is_null($firstname))
-            $customer->setFirstname($firstname);
-        if (!is_null($lastname))
-            $customer->setLastname($lastname);
-        if (!is_null($street))
-            $customer->setStreet($street);
-        if (!is_null($zip))
-            $customer->setZip($zip);
-        if (!is_null($city))
-            $customer->setCity($city);
-        if (!is_null($country))
-            $customer->setCountry($country);
-        if (!is_null($phone))
-            $customer->setPhone($phone);
-        if (!is_null($email))
-            $customer->setEmail($email);
+        $customer->setCompany($updatedCustomer->company);
+        $customer->setFirstname($updatedCustomer->firstname);
+        $customer->setLastname($updatedCustomer->lastname);
+        $customer->setStreet($updatedCustomer->street);
+        $customer->setZip($updatedCustomer->zip);
+        $customer->setCity($updatedCustomer->city);
+        $customer->setCountry($updatedCustomer->country);
+        $customer->setPhone($updatedCustomer->phone);
+        $customer->setEmail($updatedCustomer->email);
+
+        // Validation
+        $errors = $validator->validate($customer);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new Response($errorsString, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
+        }
 
         $entityManager->flush();
 
-        return new Response($this->json($customer));;
+        return new Response($this->json($customer), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
-     * @Route("/customers/list", name="list_customers")
+     * @Route("/customers/list/{page}", name="list_customers")
      */
-    public function list(CustomerRepository $customerRepository)
+    public function list($page, CustomerRepository $customerRepository)
     {
         $customers = $customerRepository->findAll();
 
@@ -120,7 +115,13 @@ class CustomersController extends AbstractController
             );
         }
 
-        return new Response($this->json($customers));
+        // Pagination
+        $adapter = new ArrayAdapter($customers);
+        $pagerfanta = new Pagerfanta($adapter);
+
+        $pagerfanta->setCurrentPage($page);
+
+        return new Response($this->json($pagerfanta->getCurrentPageResults()), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -136,7 +137,7 @@ class CustomersController extends AbstractController
             );
         }
 
-        return new Response($this->json($customer));
+        return new Response($this->json($customer), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -164,6 +165,6 @@ class CustomersController extends AbstractController
         $entityManager->remove($customer);
         $entityManager->flush();
 
-        return new Response("Customer {$id} has been deleted.");
+        return new Response("Customer {$id} has been deleted.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 }
