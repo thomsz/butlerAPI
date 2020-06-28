@@ -9,6 +9,8 @@ use App\Repository\CustomerRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 class CustomersController extends AbstractController
 {
@@ -101,9 +103,9 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/list", name="list_customers")
+     * @Route("/customers/list/{page}", name="list_customers")
      */
-    public function list(CustomerRepository $customerRepository)
+    public function list($page, CustomerRepository $customerRepository)
     {
         $customers = $customerRepository->findAll();
 
@@ -113,7 +115,13 @@ class CustomersController extends AbstractController
             );
         }
 
-        return new Response($this->json($customers), Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        // Pagination
+        $adapter = new ArrayAdapter($customers);
+        $pagerfanta = new Pagerfanta($adapter);
+
+        $pagerfanta->setCurrentPage($page);
+
+        return new Response($this->json($pagerfanta->getCurrentPageResults()), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
