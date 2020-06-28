@@ -103,11 +103,17 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/list/{page}", name="list_customers")
+     * @Route("/customers/list", name="list_customers")
      */
-    public function list($page, CustomerRepository $customerRepository)
+    public function list(CustomerRepository $customerRepository, Request $request): Response
     {
-        $customers = $customerRepository->findAll();
+        $request = json_decode($request->getContent());
+
+        $sortBy = $request->sort_by ?? 'id'; // id, company, firstname, lastname, city, country
+        $sortOrder = $request->order ?? 'ASC'; // ASC, DESC
+        $page = $request->page ?? '1';
+
+        $customers = $customerRepository->findBy([], [$sortBy => $sortOrder]);
 
         if (!$customers) {
             throw $this->createNotFoundException(

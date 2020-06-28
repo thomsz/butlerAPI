@@ -8,15 +8,22 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\HttpFoundation\Request;
 
 class ChangelogController extends AbstractController
 {
     /**
-     * @Route("/changelog/{page}", name="changelog")
+     * @Route("/changelog", name="changelog")
      */
-    public function index($page, TrackerRepository $trackerRepository): Response
+    public function index(TrackerRepository $trackerRepository, Request $request): Response
     {
-        $changes = $trackerRepository->findAll();
+        $request = json_decode($request->getContent());
+
+        $sortBy = $request->sort_by ?? 'id'; // id, userID, change, time
+        $sortOrder = $request->order ?? 'ASC'; // ASC, DESC
+        $page = $request->page ?? '1';
+
+        $changes = $trackerRepository->findBy([], [$sortBy => $sortOrder]);
 
         if (!$changes) {
             throw $this->createNotFoundException(
