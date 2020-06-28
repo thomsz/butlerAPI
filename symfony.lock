@@ -99,6 +99,9 @@
     "ocramius/proxy-manager": {
         "version": "2.2.3"
     },
+    "pagerfanta/pagerfanta": {
+        "version": "v2.3.0"
+    },
     "php": {
         "version": "7.2"
     },
