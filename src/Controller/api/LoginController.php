@@ -31,10 +31,10 @@ class LoginController extends AbstractController
         }
 
         if ($user->getPassword() == $password) {
-            $key = '%env(JWT_PASSPHRASE)%';
+            $key = $_ENV['JWT_PASSPHRASE'];
             $payload = array(
-                'iss' => '%env(URI)',
-                'aud' => '%env(URI)',
+                'iss' => $_ENV['URI'],
+                'aud' => $_ENV['URI'],
                 'iat' => time(),
                 'nbf' => time() + 10,
                 'exp' => time() + 3600,
