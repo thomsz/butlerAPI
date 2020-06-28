@@ -48,7 +48,7 @@ class CustomersController extends AbstractController
         if (count($errors) > 0) {
             $errorsString = (string) $errors;
 
-            return new Response($errorsString);
+            return new Response($errorsString, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
         }
 
         // Stage query
@@ -57,7 +57,7 @@ class CustomersController extends AbstractController
         // Execute query 
         $entityManager->flush();
 
-        return new Response("New customer ID {$customer->getId()} has been created.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        return new Response("New customer ID {$customer->getId()} has been created.", Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -86,19 +86,18 @@ class CustomersController extends AbstractController
         $customer->setPhone($updatedCustomer->phone);
         $customer->setEmail($updatedCustomer->email);
 
-
         // Validation
         $errors = $validator->validate($customer);
 
         if (count($errors) > 0) {
             $errorsString = (string) $errors;
 
-            return new Response($errorsString);
+            return new Response($errorsString, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
         }
 
         $entityManager->flush();
 
-        return new Response($this->json($customer));;
+        return new Response($this->json($customer), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -114,7 +113,7 @@ class CustomersController extends AbstractController
             );
         }
 
-        return new Response($this->json($customers));
+        return new Response($this->json($customers), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -130,7 +129,7 @@ class CustomersController extends AbstractController
             );
         }
 
-        return new Response($this->json($customer));
+        return new Response($this->json($customer), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -158,6 +157,6 @@ class CustomersController extends AbstractController
         $entityManager->remove($customer);
         $entityManager->flush();
 
-        return new Response("Customer {$id} has been deleted.");
+        return new Response("Customer {$id} has been deleted.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 }
