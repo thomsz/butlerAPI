@@ -63,7 +63,7 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/update/{id}", name="update_customer")
      */
-    public function update($id, CustomerRepository $customerRepository, Request $request): Response
+    public function update($id, CustomerRepository $customerRepository, Request $request, ValidatorInterface $validator): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $customer = $customerRepository->find($id);
@@ -74,34 +74,27 @@ class CustomersController extends AbstractController
             );
         }
 
-        $company = $request->request->get('company');
-        $firstname = $request->request->get('firstname');
-        $lastname = $request->request->get('lastname');
-        $street = $request->request->get('street');
-        $zip = $request->request->get('zip');
-        $city = $request->request->get('city');
-        $country = $request->request->get('country');
-        $phone = $request->request->get('phone');
-        $email = $request->request->get('email');
+        $updatedCustomer = json_decode($request->getContent());
 
-        if (!is_null($company))
-            $customer->setCompany($company);
-        if (!is_null($firstname))
-            $customer->setFirstname($firstname);
-        if (!is_null($lastname))
-            $customer->setLastname($lastname);
-        if (!is_null($street))
-            $customer->setStreet($street);
-        if (!is_null($zip))
-            $customer->setZip($zip);
-        if (!is_null($city))
-            $customer->setCity($city);
-        if (!is_null($country))
-            $customer->setCountry($country);
-        if (!is_null($phone))
-            $customer->setPhone($phone);
-        if (!is_null($email))
-            $customer->setEmail($email);
+        $customer->setCompany($updatedCustomer->company);
+        $customer->setFirstname($updatedCustomer->firstname);
+        $customer->setLastname($updatedCustomer->lastname);
+        $customer->setStreet($updatedCustomer->street);
+        $customer->setZip($updatedCustomer->zip);
+        $customer->setCity($updatedCustomer->city);
+        $customer->setCountry($updatedCustomer->country);
+        $customer->setPhone($updatedCustomer->phone);
+        $customer->setEmail($updatedCustomer->email);
+
+
+        // Validation
+        $errors = $validator->validate($customer);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new Response($errorsString);
+        }
 
         $entityManager->flush();
 
