@@ -18,10 +18,20 @@ class FlushListener
         }
 
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
+            if ($entity instanceof Customer) {
+                $tracker = new Tracker();
+                $tracker->setUserID($entity->getId());
+                $tracker->setChange('delete');
+                $tracker->setContent(['Customer was deleted.']);
+                $tracker->setTime(new \Datetime());
+
+                $entityManager->persist($tracker);
+                $metaData = $entityManager->getClassMetadata('App\Entity\tracker');
+                $unitOfWork->computeChangeSet($metaData, $tracker);
+            }
         }
 
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-
             if ($entity instanceof Customer) {
 
                 $changeSet = $unitOfWork->getEntityChangeSet($entity);
