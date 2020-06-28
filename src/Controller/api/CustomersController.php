@@ -8,6 +8,7 @@ use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CustomersController extends AbstractController
 {
@@ -25,30 +26,30 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/create", name="create_customer")
      */
-    public function create(Request $request): Response
+    public function create(Request $request, ValidatorInterface $validator): Response
     {
+        $newCustomer = json_decode($request->getContent());
         $entityManager = $this->getDoctrine()->getManager();
 
-        $company = $request->request->get('company');
-        $firstname = $request->request->get('firstname');
-        $lastname = $request->request->get('lastname');
-        $street = $request->request->get('street');
-        $zip = $request->request->get('zip');
-        $city = $request->request->get('city');
-        $country = $request->request->get('country');
-        $phone = $request->request->get('phone');
-        $email = $request->request->get('email');
-
         $customer = new Customer();
-        $customer->setCompany($company);
-        $customer->setFirstname($firstname);
-        $customer->setLastname($lastname);
-        $customer->setStreet($street);
-        $customer->setZip($zip);
-        $customer->setCity($city);
-        $customer->setCountry($country);
-        $customer->setPhone($phone);
-        $customer->setEmail($email);
+        $customer->setCompany($newCustomer->company);
+        $customer->setFirstname($newCustomer->firstname);
+        $customer->setLastname($newCustomer->lastname);
+        $customer->setStreet($newCustomer->street);
+        $customer->setZip($newCustomer->zip);
+        $customer->setCity($newCustomer->city);
+        $customer->setCountry($newCustomer->country);
+        $customer->setPhone($newCustomer->phone);
+        $customer->setEmail($newCustomer->email);
+
+        // Validation
+        $errors = $validator->validate($customer);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new Response($errorsString);
+        }
 
         // Stage query
         $entityManager->persist($customer);

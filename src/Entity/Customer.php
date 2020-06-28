@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
@@ -61,6 +64,24 @@ class Customer
      * @ORM\Column(type="string", length=254)
      */
     private $email;
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('firstname', new Assert\NotBlank());
+        $metadata->addPropertyConstraint('lastname', new Assert\NotBlank());
+        $metadata->addPropertyConstraint('zip', new Assert\Length(['max' => 5]));
+        $metadata->addPropertyConstraint('phone', new Assert\Regex([
+            'pattern' => '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/',
+            'message' => 'Please enter a valid phone number.',
+        ]));
+        $metadata->addPropertyConstraint('email', new Assert\NotBlank());
+        $metadata->addPropertyConstraint('email', new Assert\Email([
+            'message' => 'The email "{{ value }}" is not a valid email.',
+        ]));
+        $metadata->addConstraint(new UniqueEntity([
+            'fields' => 'email',
+        ]));
+    }
 
     public function getId(): ?int
     {
