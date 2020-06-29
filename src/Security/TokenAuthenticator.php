@@ -40,16 +40,13 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        if (
-            $request->headers->has('Authorization')
-            && 0 === strpos($request->headers->get('Authorization'), 'Bearer ')
-        ) {
-            $authorizationHeader = $request->headers->get('Authorization');
-            return substr($authorizationHeader, 7);
+        $request = json_decode($request->getContent());
+        if (!is_null($request) && array_key_exists('access_token', $request)) {
+            return $request->access_token;
         }
 
         throw new CustomUserMessageAuthenticationException(
-            'Authentication required'
+            'Access token is required'
         );
     }
 
