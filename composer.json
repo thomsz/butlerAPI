@@ -1,5 +1,7 @@
 {
 	"type": "project",
+	"name": "butlerAPI",
+	"description": "An API for managing prospective customers",
 	"license": "proprietary",
 	"require": {
 		"php": "^7.1.3",
