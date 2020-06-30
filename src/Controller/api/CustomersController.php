@@ -45,39 +45,10 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/update/{id}", name="update_customer")
      */
-    public function update($id, CustomerRepository $customerRepository, Request $request, ValidatorInterface $validator): Response
+    public function update($id, CustomerManager $customerManager, CustomerRepository $customerRepository, Request $request, ValidatorInterface $validator): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $customer = $customerRepository->find($id);
-
-        if (!$customer) {
-            throw $this->createNotFoundException(
-                'No customer found for id ' . $id
-            );
-        }
-
         $updatedCustomer = json_decode($request->getContent());
-
-        $customer->setCompany($updatedCustomer->company);
-        $customer->setFirstname($updatedCustomer->firstname);
-        $customer->setLastname($updatedCustomer->lastname);
-        $customer->setStreet($updatedCustomer->street);
-        $customer->setZip($updatedCustomer->zip);
-        $customer->setCity($updatedCustomer->city);
-        $customer->setCountry($updatedCustomer->country);
-        $customer->setPhone($updatedCustomer->phone);
-        $customer->setEmail($updatedCustomer->email);
-
-        // Validation
-        $errors = $validator->validate($customer);
-
-        if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-
-            return new Response($errorsString, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
-        }
-
-        $entityManager->flush();
+        $customer = $customerManager->update($id, $updatedCustomer);
 
         return new Response($this->json($customer), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }

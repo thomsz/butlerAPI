@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class CustomerManager
 {
@@ -18,6 +19,41 @@ class CustomerManager
         $this->customerRepository = $customerRepository;
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+    }
+
+    public function update($id, $updatedCustomer)
+    {
+
+        $customer = $this->customerRepository->find($id);
+
+        if (!$customer) {
+            throw new \Exception(
+                'No customer found for id ' . $id
+            );
+        }
+
+        $customer->setCompany($updatedCustomer->company);
+        $customer->setFirstname($updatedCustomer->firstname);
+        $customer->setLastname($updatedCustomer->lastname);
+        $customer->setStreet($updatedCustomer->street);
+        $customer->setZip($updatedCustomer->zip);
+        $customer->setCity($updatedCustomer->city);
+        $customer->setCountry($updatedCustomer->country);
+        $customer->setPhone($updatedCustomer->phone);
+        $customer->setEmail($updatedCustomer->email);
+
+        // Validation
+        $errors = $this->validator->validate($customer);
+
+        if (count($errors) > 0) {
+            $errorsString = (string) $errors;
+
+            return new Response($errorsString, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
+        }
+
+        $this->entityManager->flush();
+
+        return $customer;
     }
 
     public function create($newCustomer)
