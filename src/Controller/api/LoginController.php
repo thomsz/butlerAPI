@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Utils\Login;
+use App\Service\Login;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LoginController extends AbstractController
@@ -16,10 +16,9 @@ class LoginController extends AbstractController
     /**
      * @Route("/login", name="login")
      */
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Login $login, Request $request, EntityManagerInterface $entityManager): Response
     {
         $credentials = json_decode($request->getContent());
-        $login = new Login($entityManager);
 
         if ($jwt = $login->try($credentials)) {
             return new Response($this->json(['token' => $jwt]));
