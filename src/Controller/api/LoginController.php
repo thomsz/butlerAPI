@@ -11,7 +11,7 @@ use App\Service\Login;
 class LoginController extends AbstractController
 {
     /**
-     * @Route("/login", name="login")
+     * @Route("/login", name="login", methods={"POST"})
      */
     public function index(Login $login, Request $request): Response
     {
