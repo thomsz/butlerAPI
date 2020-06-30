@@ -24,9 +24,7 @@ class Tracker
         $changes = $this->trackerRepository->findBy([], [$sortBy => $sortOrder]);
 
         if (!$changes) {
-            throw new \Exception(
-                'No changes found'
-            );
+            throw new \Exception('No changes found');
         }
 
         // Pagination
