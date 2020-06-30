@@ -2,48 +2,26 @@
 
 namespace App\Controller\api;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Repository\UserRepository;
-use \Firebase\JWT\JWT;
+use Doctrine\Persistence\ManagerRegistry;
+use App\Service\Login;
+use Doctrine\ORM\EntityManagerInterface;
 
 class LoginController extends AbstractController
 {
     /**
      * @Route("/login", name="login")
      */
-    public function index(UserRepository $userRepository, Request $request): Response
+    public function index(Login $login, Request $request, EntityManagerInterface $entityManager): Response
     {
         $credentials = json_decode($request->getContent());
 
-        $password = $credentials->password ?? null;
-
-        if ($username = $credentials->username ?? false) {
-            $user = $userRepository->findOneByUsername($username);
-        }
-
-        if (!$user) {
-            throw $this->createNotFoundException(
-                'No username found'
-            );
-        }
-
-        if ($user->getPassword() == $password) {
-            $key = $_ENV['JWT_PASSPHRASE'];
-            $payload = array(
-                'iss' => $_ENV['URI'],
-                'aud' => $_ENV['URI'],
-                'iat' => time(),
-                'nbf' => time() + 10,
-                'exp' => time() + 3600,
-                'username' => $username,
-            );
-
-            $jwt = JWT::encode($payload, $key);
-
-            return new Response($this->json($jwt));
+        if ($jwt = $login->try($credentials)) {
+            return new Response($this->json(['token' => $jwt]));
         } else {
             return new Response('Password is incorrect.', Response::HTTP_UNAUTHORIZED);
         }
