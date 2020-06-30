@@ -1,323 +1,323 @@
 #%RAML 1.0
 title: butlerAPI
 version: 1.0.0
-baseUri: http://localhost:3000
+baseUri: http://localhost:8000
 mediaType: application/json
 
 /login:
-  post:
-    description: Generate butlerAPI access token
-    queryParameters:
-        username:
-          displayName: Username
-          type: string
-          description: An authorized username
-          example: user20
-          required: true
-        password:
-          displayName: Password
-          type: string
-          description: butlerAPI user password
-          example: mycoolpassword
-          required: true
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {
-                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMCIsImF1ZCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwIiwiaWF0IjoxNTkzNTA4NjQ0LCJuYmYiOjE1OTM1MDg2NDQsImV4cCI6MTU5MzUxMjI0NCwidXNlcm5hbWUiOiJhZG1pbiJ9.92pxjr1YUFlipx9mPmRXEV9fXljbIhvztQuvzBwXEF0"
-              }
+    post:
+        description: Generate butlerAPI access token
+        queryParameters:
+            username:
+                displayName: Username
+                type: string
+                description: An authorized username
+                example: user20
+                required: true
+            password:
+                displayName: Password
+                type: string
+                description: butlerAPI user password
+                example: mycoolpassword
+                required: true
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                            {
+                              "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMCIsImF1ZCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwIiwiaWF0IjoxNTkzNTA4NjQ0LCJuYmYiOjE1OTM1MDg2NDQsImV4cCI6MTU5MzUxMjI0NCwidXNlcm5hbWUiOiJhZG1pbiJ9.92pxjr1YUFlipx9mPmRXEV9fXljbIhvztQuvzBwXEF0"
+                            }
 
 /customers:
-  /create:
-    post:
-      description: Add a new customer
-      queryParameters:
-        company:
-          displayName: Company
-          type: string
-          description: Customer company
-          example: Google
-          required: false
-        firstname:
-          displayName: First name
-          type: string
-          description: Customer's First Name
-          example: Elon
-          required: true
-        lastname:
-          displayName: Last Name
-          type: string
-          description: Customer's last name 
-          example: Musk
-          required: true
-        street:
-          displayName: Street
-          type: string
-          description: Customer's address 
-          example: 1 Hacker Way
-          require: false
-        zip:
-          displayName: ZIP code
-          type: string
-          description: Customer's zip code
-          example: 94025
-          required: false
-        city:
-          displayName: City
-          type: string
-          description: Customer's city
-          example: Menlo Park
-          required: false
-        country:
-          displayName: Country 
-          type: string
-          description: Customer's country
-          example: California, USA
-          required: false
-        phone:
-          displayName: Phone number
-          type: string
-          description: Customer's contact number
-          example: +42052034053
-          required: false
-        email:
-          displayName: Email address
-          type: string
-          description: Customer's email address
-          required: true
-        access_token:
-          displayName: butlerAPI access token
-          type: string
-          description: butlerAPI access token
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  "id": 30,
-                  "company": "Google",
-                  "firstname": "Elon",
-                  "lastname": "Musk",
-                  "street": "Hacker Way",
-                  "zip": "94025",
-                  "city": "Menlo Park",
-                  "country": "California, USA",
-                  "phone": "123456789",
-                  "email": "elonimus@tesla.com"
-                }
-  /update:
-    put:
-      description: Update an existing customer
-      queryParameters:
-        company:
-          displayName: Company
-          type: string
-          description: Customer company
-          example: Google
-          required: true
-        firstname:
-          displayName: First name
-          type: string
-          description: Customer's First Name
-          example: Elon
-          required: true
-        lastname:
-          displayName: Last Name
-          type: string
-          description: Customer's last name 
-          example: Musk
-          required: true
-        street:
-          displayName: Street
-          type: string
-          description: Customer's address 
-          example: 1 Hacker Way
-          require: true
-        zip:
-          displayName: ZIP code
-          type: string
-          description: Customer's zip code
-          example: 94025
-          required: true
-        city:
-          displayName: City
-          type: string
-          description: Customer's city
-          example: Menlo Park
-          required: true
-        country:
-          displayName: Country 
-          type: string
-          description: Customer's country
-          example: California, USA
-          required: true
-        phone:
-          displayName: Phone number
-          type: string
-          description: Customer's contact number
-          example: +42052034053
-          required: true
-        email:
-          displayName: Email address
-          type: string
-          description: Customer's email address
-          required: true
-        access_token:
-          displayName: butlerAPI access token
-          type: string
-          description: butlerAPI access token
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  "id": 30,
-                  "company": "Google",
-                  "firstname": "Elon",
-                  "lastname": "Musk",
-                  "street": "Hacker Way",
-                  "zip": "94025",
-                  "city": "Menlo Park",
-                  "country": "California, USA",
-                  "phone": "123456789",
-                  "email": "elonimus@tesla.com"
-                }
-  /delete:
-    delete:
-      description: Delete customer by ID or email
-      queryParameters:
-        id:
-          displayName: Customer ID
-          type: integer
-          description: Customer ID
-          required: true
-        email:
-          displayName: Email address
-          type: string
-          description: Customer's email address
-          required: true
-        access_token:
-          displayName: butlerAPI access token
-          type: string
-          description: butlerAPI access token
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  "message": "Customer has been deleted."
-                }
-  /list:
-    get:
-      description: List all customers. 10 items per page.
-      queryParameters:
-        sort_by:
-          displayName: Sort by
-          type: string
-          description: Sorting method. id (default), company, firstname, lastname, city, country
-          required: false
-        order:
-          displayName: Order of items
-          type: string
-          description: Order of items to display. ASC (default), DESC
-          required: false
-        page:
-          displayName: Page
-          type: integer
-          description: Page to show
-          required: false
-        access_token:
-          displayName: butlerAPI access token
-          type: string
-          description: butlerAPI access token
-          required: true
-      responses:
-        200:
-          body:
-            application/json:
-              example: |
-                {
-                  "id": 30,
-                  "company": "Google",
-                  "firstname": "Elon",
-                  "lastname": "Musk",
-                  "street": "Hacker Way",
-                  "zip": "94025",
-                  "city": "Menlo Park",
-                  "country": "California, USA",
-                  "phone": "123456789",
-                  "email": "elonimus@tesla.com"
-                }
-    /{id}:
-      get:
-        description: Show a customer by ID
-        queryParameters:
-          access_token:
-            displayName: butlerAPI access token
-            type: string
-            description: butlerAPI access token
-            required: true
-        responses:
-          200:
-            body:
-              application/json:
-                example: |
-                  {
-                    "id": 30,
-                    "company": "Google",
-                    "firstname": "Elon",
-                    "lastname": "Musk",
-                    "street": "Hacker Way",
-                    "zip": "94025",
-                    "city": "Menlo Park",
-                    "country": "California, USA",
-                    "phone": "123456789",
-                    "email": "elonimus@tesla.com"
-                  }
+    /create:
+        post:
+            description: Add a new customer
+            queryParameters:
+                company:
+                    displayName: Company
+                    type: string
+                    description: Customer company
+                    example: Google
+                    required: false
+                firstname:
+                    displayName: First name
+                    type: string
+                    description: Customer's First Name
+                    example: Elon
+                    required: true
+                lastname:
+                    displayName: Last Name
+                    type: string
+                    description: Customer's last name
+                    example: Musk
+                    required: true
+                street:
+                    displayName: Street
+                    type: string
+                    description: Customer's address
+                    example: 1 Hacker Way
+                    require: false
+                zip:
+                    displayName: ZIP code
+                    type: string
+                    description: Customer's zip code
+                    example: 94025
+                    required: false
+                city:
+                    displayName: City
+                    type: string
+                    description: Customer's city
+                    example: Menlo Park
+                    required: false
+                country:
+                    displayName: Country
+                    type: string
+                    description: Customer's country
+                    example: California, USA
+                    required: false
+                phone:
+                    displayName: Phone number
+                    type: string
+                    description: Customer's contact number
+                    example: +42052034053
+                    required: false
+                email:
+                    displayName: Email address
+                    type: string
+                    description: Customer's email address
+                    required: true
+                access_token:
+                    displayName: butlerAPI access token
+                    type: string
+                    description: butlerAPI access token
+                    required: true
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                {
+                                  "id": 30,
+                                  "company": "Google",
+                                  "firstname": "Elon",
+                                  "lastname": "Musk",
+                                  "street": "Hacker Way",
+                                  "zip": "94025",
+                                  "city": "Menlo Park",
+                                  "country": "California, USA",
+                                  "phone": "123456789",
+                                  "email": "elonimus@tesla.com"
+                                }
+    /update:
+        put:
+            description: Update an existing customer
+            queryParameters:
+                company:
+                    displayName: Company
+                    type: string
+                    description: Customer company
+                    example: Google
+                    required: true
+                firstname:
+                    displayName: First name
+                    type: string
+                    description: Customer's First Name
+                    example: Elon
+                    required: true
+                lastname:
+                    displayName: Last Name
+                    type: string
+                    description: Customer's last name
+                    example: Musk
+                    required: true
+                street:
+                    displayName: Street
+                    type: string
+                    description: Customer's address
+                    example: 1 Hacker Way
+                    require: true
+                zip:
+                    displayName: ZIP code
+                    type: string
+                    description: Customer's zip code
+                    example: 94025
+                    required: true
+                city:
+                    displayName: City
+                    type: string
+                    description: Customer's city
+                    example: Menlo Park
+                    required: true
+                country:
+                    displayName: Country
+                    type: string
+                    description: Customer's country
+                    example: California, USA
+                    required: true
+                phone:
+                    displayName: Phone number
+                    type: string
+                    description: Customer's contact number
+                    example: +42052034053
+                    required: true
+                email:
+                    displayName: Email address
+                    type: string
+                    description: Customer's email address
+                    required: true
+                access_token:
+                    displayName: butlerAPI access token
+                    type: string
+                    description: butlerAPI access token
+                    required: true
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                {
+                                  "id": 30,
+                                  "company": "Google",
+                                  "firstname": "Elon",
+                                  "lastname": "Musk",
+                                  "street": "Hacker Way",
+                                  "zip": "94025",
+                                  "city": "Menlo Park",
+                                  "country": "California, USA",
+                                  "phone": "123456789",
+                                  "email": "elonimus@tesla.com"
+                                }
+    /delete:
+        delete:
+            description: Delete customer by ID or email
+            queryParameters:
+                id:
+                    displayName: Customer ID
+                    type: integer
+                    description: Customer ID
+                    required: true
+                email:
+                    displayName: Email address
+                    type: string
+                    description: Customer's email address
+                    required: true
+                access_token:
+                    displayName: butlerAPI access token
+                    type: string
+                    description: butlerAPI access token
+                    required: true
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                {
+                                  "message": "Customer has been deleted."
+                                }
+    /list:
+        get:
+            description: List all customers. 10 items per page.
+            queryParameters:
+                sort_by:
+                    displayName: Sort by
+                    type: string
+                    description: Sorting method. id (default), company, firstname, lastname, city, country
+                    required: false
+                order:
+                    displayName: Order of items
+                    type: string
+                    description: Order of items to display. ASC (default), DESC
+                    required: false
+                page:
+                    displayName: Page
+                    type: integer
+                    description: Page to show
+                    required: false
+                access_token:
+                    displayName: butlerAPI access token
+                    type: string
+                    description: butlerAPI access token
+                    required: true
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                {
+                                  "id": 30,
+                                  "company": "Google",
+                                  "firstname": "Elon",
+                                  "lastname": "Musk",
+                                  "street": "Hacker Way",
+                                  "zip": "94025",
+                                  "city": "Menlo Park",
+                                  "country": "California, USA",
+                                  "phone": "123456789",
+                                  "email": "elonimus@tesla.com"
+                                }
+        /{id}:
+            get:
+                description: Show a customer by ID
+                queryParameters:
+                    access_token:
+                        displayName: butlerAPI access token
+                        type: string
+                        description: butlerAPI access token
+                        required: true
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                example: |
+                                    {
+                                      "id": 30,
+                                      "company": "Google",
+                                      "firstname": "Elon",
+                                      "lastname": "Musk",
+                                      "street": "Hacker Way",
+                                      "zip": "94025",
+                                      "city": "Menlo Park",
+                                      "country": "California, USA",
+                                      "phone": "123456789",
+                                      "email": "elonimus@tesla.com"
+                                    }
 /changelog:
-  get:
-    description: List API changelog
-    queryParameters:
-        sort_by:
-          displayName: Sort by
-          type: string
-          description: Sorting method. id (default), userID, change, time
-          required: false
-        order:
-          displayName: Order of items
-          type: string
-          description: Order of items to display. ASC (default), DESC
-          required: false
-        page:
-          displayName: Page
-          type: integer
-          description: Page to show
-          required: false
-        password:
-          displayName: Password
-          type: string
-          description: butlerAPI user password
-          example: mycoolpassword
-          required: true
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {
-                  "id": 54,
-                  "userID": 31,
-                  "change": "delete",
-                  "content": [
-                      "Customer was deleted."
-                  ],
-                  "time": "2020-06-30T11:59:32+02:00"
-              }
+    get:
+        description: List API changelog
+        queryParameters:
+            sort_by:
+                displayName: Sort by
+                type: string
+                description: Sorting method. id (default), userID, change, time
+                required: false
+            order:
+                displayName: Order of items
+                type: string
+                description: Order of items to display. ASC (default), DESC
+                required: false
+            page:
+                displayName: Page
+                type: integer
+                description: Page to show
+                required: false
+            password:
+                displayName: Password
+                type: string
+                description: butlerAPI user password
+                example: mycoolpassword
+                required: true
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                            {
+                                "id": 54,
+                                "userID": 31,
+                                "change": "delete",
+                                "content": [
+                                    "Customer was deleted."
+                                ],
+                                "time": "2020-06-30T11:59:32+02:00"
+                            }
