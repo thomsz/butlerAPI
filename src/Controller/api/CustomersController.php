@@ -65,17 +65,9 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/list/{id}", name="show_customer")
      */
-    public function list_by_id($id, CustomerRepository $customerRepository): Response
+    public function list_by_id($id, CustomerManager $customerManager): Response
     {
-        $customer = $customerRepository->find($id);
-
-        if (!$customer) {
-            throw $this->createNotFoundException(
-                'No customer found for id ' . $id
-            );
-        }
-
-        return new Response($this->json($customer), Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        return new Response($this->json($customerManager->list_by_id($id)), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**

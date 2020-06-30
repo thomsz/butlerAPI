@@ -23,6 +23,19 @@ class CustomerManager
         $this->validator = $validator;
     }
 
+    public function list_by_id($id)
+    {
+        $customer = $this->customerRepository->find($id);
+
+        if (!$customer) {
+            throw new \Exception(
+                'No customer found for id ' . $id
+            );
+        }
+
+        return $customer;
+    }
+
     public function list($request)
     {
 
