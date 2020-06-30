@@ -11,7 +11,7 @@ use App\Service\Tracker;
 class ChangelogController extends AbstractController
 {
     /**
-     * @Route("/changelog", name="changelog")
+     * @Route("/changelog", name="changelog", methods={"GET"})
      */
     public function index(Tracker $tracker, Request $request): Response
     {

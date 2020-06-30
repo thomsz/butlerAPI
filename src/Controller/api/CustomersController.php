@@ -26,7 +26,7 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/create", name="create_customer")
+     * @Route("/customers/create", name="create_customer", methods={"POST"})
      */
     public function create(Request $request, CustomerManager $customerManager): Response
     {
@@ -42,7 +42,7 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/update/{id}", name="update_customer")
+     * @Route("/customers/update/{id}", name="update_customer", methods={"PUT"})
      */
     public function update($id, CustomerManager $customerManager, Request $request): Response
     {
@@ -53,7 +53,7 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/list", name="list_customers")
+     * @Route("/customers/list", name="list_customers", methods={"GET"})
      */
     public function list(CustomerManager $customerManager, Request $request): Response
     {
@@ -63,7 +63,7 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/list/{id}", name="show_customer")
+     * @Route("/customers/list/{id}", name="show_customer", methods={"GET"})
      */
     public function list_by_id($id, CustomerManager $customerManager): Response
     {
@@ -71,7 +71,7 @@ class CustomersController extends AbstractController
     }
 
     /**
-     * @Route("/customers/delete", name="delete_customer")
+     * @Route("/customers/delete", name="delete_customer", methods={"DELETE"})
      */
     public function delete(CustomerManager $customerManager, Request $request): Response
     {

@@ -11,7 +11,7 @@ use App\Service\Login;
 class LoginController extends AbstractController
 {
     /**
-     * @Route("/login", name="login")
+     * @Route("/login", name="login", methods={"POST"})
      */
     public function index(Login $login, Request $request): Response
     {
@@ -20,7 +20,7 @@ class LoginController extends AbstractController
         if ($jwt = $login->try($credentials)) {
             return new Response($this->json(['token' => $jwt]));
         } else {
-            return new Response($this->json(['message' => 'Password is incorrect.']), Response::HTTP_UNAUTHORIZED);
+            return new Response($this->json(['message' => 'Credentials are incorrect.']), Response::HTTP_UNAUTHORIZED);
         }
     }
 }
