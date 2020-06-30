@@ -132,6 +132,8 @@ class CustomerManager
             $customer = $this->customerRepository->find($id);
         } else if ($email = $customer->email ?? false) {
             $customer = $this->customerRepository->findOneByEmail($email);
+        } else {
+            throw new \Exception('Please provide user identification. Either a customer ID or email address.');
         }
 
         if (!$customer) throw new \Exception('Could not find user.');

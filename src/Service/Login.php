@@ -24,9 +24,7 @@ class Login
         }
 
         if (!$user) {
-            throw new \Exception(
-                'No username found'
-            );
+            throw new \Exception('No username found');
             return false;
         }
 

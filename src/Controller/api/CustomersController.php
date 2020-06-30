@@ -38,7 +38,7 @@ class CustomersController extends AbstractController
             return new Response($customer, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
         }
 
-        return new Response("New customer ID {$customer->getId()} has been created.", Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
+        return new Response($this->json(['message' => "New customer ID {$customer->getId()} has been created."]), Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -78,8 +78,8 @@ class CustomersController extends AbstractController
         $customer = json_decode($request->getContent());
 
         if (is_integer($customerManager->delete($customer)))
-            return new Response("Customer has been deleted.", Response::HTTP_OK, ['Content-Type' => 'application/json']);
+            return new Response($this->json(['message' => 'Customer has been deleted.']), Response::HTTP_OK, ['Content-Type' => 'application/json']);
         else
-            return new Response('Customer was not found.', Response::HTTP_NOT_FOUND);
+            return new Response($this->json(['message' => 'Customer was not found.']), Response::HTTP_NOT_FOUND);
     }
 }
