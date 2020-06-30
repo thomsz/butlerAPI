@@ -7,6 +7,8 @@ use App\Entity\Customer;
 use App\Repository\CustomerRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 
 class CustomerManager
 {
@@ -19,6 +21,30 @@ class CustomerManager
         $this->customerRepository = $customerRepository;
         $this->entityManager = $entityManager;
         $this->validator = $validator;
+    }
+
+    public function list($request)
+    {
+
+        $sortBy = $request->sort_by ?? 'id'; // id, company, firstname, lastname, city, country
+        $sortOrder = $request->order ?? 'ASC'; // ASC, DESC
+        $page = $request->page ?? '1';
+
+        $customers = $this->customerRepository->findBy([], [$sortBy => $sortOrder]);
+
+        if (!$customers) {
+            throw new \Exception(
+                'No customers found'
+            );
+        }
+
+        // Pagination
+        $adapter = new ArrayAdapter($customers);
+        $pagerfanta = new Pagerfanta($adapter);
+
+        $pagerfanta->setCurrentPage($page);
+
+        return $pagerfanta->getCurrentPageResults();
     }
 
     public function update($id, $updatedCustomer)

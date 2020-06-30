@@ -10,8 +10,7 @@ use App\Service\CustomerManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Pagerfanta\Adapter\ArrayAdapter;
-use Pagerfanta\Pagerfanta;
+
 
 class CustomersController extends AbstractController
 {
@@ -45,7 +44,7 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/update/{id}", name="update_customer")
      */
-    public function update($id, CustomerManager $customerManager, CustomerRepository $customerRepository, Request $request, ValidatorInterface $validator): Response
+    public function update($id, CustomerManager $customerManager, Request $request): Response
     {
         $updatedCustomer = json_decode($request->getContent());
         $customer = $customerManager->update($id, $updatedCustomer);
@@ -56,29 +55,11 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers/list", name="list_customers")
      */
-    public function list(CustomerRepository $customerRepository, Request $request): Response
+    public function list(CustomerManager $customerManager, Request $request): Response
     {
         $request = json_decode($request->getContent());
 
-        $sortBy = $request->sort_by ?? 'id'; // id, company, firstname, lastname, city, country
-        $sortOrder = $request->order ?? 'ASC'; // ASC, DESC
-        $page = $request->page ?? '1';
-
-        $customers = $customerRepository->findBy([], [$sortBy => $sortOrder]);
-
-        if (!$customers) {
-            throw $this->createNotFoundException(
-                'No customers found'
-            );
-        }
-
-        // Pagination
-        $adapter = new ArrayAdapter($customers);
-        $pagerfanta = new Pagerfanta($adapter);
-
-        $pagerfanta->setCurrentPage($page);
-
-        return new Response($this->json($pagerfanta->getCurrentPageResults()), Response::HTTP_OK, ['Content-Type' => 'application/json']);
+        return new Response($this->json($customerManager->list($request)), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
