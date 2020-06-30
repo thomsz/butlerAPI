@@ -122,6 +122,7 @@ class CustomerManager
 
         // Execute query 
         $this->entityManager->flush();
+
         return $customer;
     }
 
@@ -133,7 +134,7 @@ class CustomerManager
             $customer = $this->customerRepository->findOneByEmail($email);
         }
 
-        if (!$customer) return false;
+        if (!$customer) throw new \Exception('Could not find user.');
 
         $id = $customer->getId();
 
