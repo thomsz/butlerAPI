@@ -17,12 +17,11 @@ class CustomersController extends AbstractController
     /**
      * @Route("/customers", name="customers")
      */
-    public function index()
+    public function index(CustomerManager $customerManager, Request $request)
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/CustomersController.php',
-        ]);
+        $request = json_decode($request->getContent());
+
+        return new Response($this->json($customerManager->list($request)), Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     /**
