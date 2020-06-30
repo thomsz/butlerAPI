@@ -1,0 +1,165 @@
+#%RAML 1.0
+title: butlerAPI
+version: 1.0.0
+baseUri: http://localhost:3000
+mediaType: application/json
+
+/login:
+  post:
+    description: Generate butlerAPI access token
+    queryParameters:
+        username:
+          displayName: Username
+          type: string
+          description: An authorized username
+          example: user20
+          required: true
+        password:
+          displayName: Password
+          type: string
+          description: butlerAPI user password
+          example: mycoolpassword
+          required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMCIsImF1ZCI6Imh0dHA6XC9cL2xvY2FsaG9zdDo4MDAwIiwiaWF0IjoxNTkzNTA4NjQ0LCJuYmYiOjE1OTM1MDg2NDQsImV4cCI6MTU5MzUxMjI0NCwidXNlcm5hbWUiOiJhZG1pbiJ9.92pxjr1YUFlipx9mPmRXEV9fXljbIhvztQuvzBwXEF0"
+              }
+
+/customers:
+  /create:
+    post:
+      description: Add a new customer
+      queryParameters:
+        company:
+          displayName: Company
+          type: string
+          description: Customer company
+          example: Google
+          required: false
+        firstname:
+          displayName: First name
+          type: string
+          description: Customer's First Name
+          example: Elon
+          required: true
+        lastname:
+          displayName: Last Name
+          type: string
+          description: Customer's last name 
+          example: Musk
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "data": {
+                    "id": 30,
+                    "company": "Google",
+                    "firstname": "Elon",
+                    "lastname": "Musk",
+                    "street": "Hacker Way",
+                    "zip": "94025",
+                    "city": "Menlo Park",
+                    "country": "California, USA",
+                    "phone": "123456789",
+                    "email": "elonimus@tesla.com"
+                  },
+                  "success": true,
+                  "status": 200
+                }
+  /list:
+    get:
+      description: List all customers
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "data": {
+                    "id": 30,
+                    "company": "Google",
+                    "firstname": "Elon",
+                    "lastname": "Musk",
+                    "street": "Hacker Way",
+                    "zip": "94025",
+                    "city": "Menlo Park",
+                    "country": "California, USA",
+                    "phone": "123456789",
+                    "email": "elonimus@tesla.com"
+                  },
+                  "success": true,
+                  "status": 200
+                }
+  /delete
+    /{ID_or_email}:
+      delete:
+        description: Delete customer by ID or email
+        responses:
+          200:
+            body:
+              application/json
+  /update
+    
+
+
+
+/books:
+  /{bookTitle}
+    get:
+      description: Retrieve a specific book title
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "data": {
+                    "id": "SbBGk",
+                    "title": "Stiff: The Curious Lives of Human Cadavers",
+                    "description": null,
+                    "datetime": 1341533193,
+                    "genre": "science",
+                    "author": "Mary Roach",
+                    "link": "http://e-bookmobile.com/books/Stiff"
+                  },
+                  "success": true,
+                  "status": 200
+                }
+      queryParameters:
+        author:
+          displayName: Author
+          type: string
+          description: An author's full name
+          example: Mary Roach
+          required: false
+        publicationYear:
+          displayName: Pub Year
+          type: number
+          description: The year released for the first time in the US
+          example: 1984
+          required: false
+        rating:
+          displayName: Rating
+          type: number
+          description: Average rating (1-5) submitted by users
+          example: 3.14
+          required: false
+        isbn:
+          displayName: ISBN
+          type: string
+          minLength: 10
+          example: 0321736079
+    put:
+      queryParameters:
+        access_token:
+          displayName: Access Token
+          type: string
+          description: Token giving you permission to make call
+          required: true
