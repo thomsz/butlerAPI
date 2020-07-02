@@ -6,6 +6,9 @@ use \Firebase\JWT\JWT;
 
 class Generator
 {
+    /**
+     * Generate access token
+     */
     public function accessToken($username = '')
     {
         $key = $_ENV['JWT_PASSPHRASE'];

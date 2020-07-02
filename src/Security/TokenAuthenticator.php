@@ -41,6 +41,13 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         $request = json_decode($request->getContent());
+
+        if (is_object($request) && ($request->access_token == '' || strlen($request->access_token) < 250)) {
+            throw new CustomUserMessageAuthenticationException(
+                'Please provide a valid access token'
+            );
+        }
+
         if (!is_null($request) && array_key_exists('access_token', $request)) {
             return $request->access_token;
         }

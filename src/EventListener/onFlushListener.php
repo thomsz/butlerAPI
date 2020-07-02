@@ -10,6 +10,9 @@ use Symfony\Component\Serializer;
 
 class FlushListener
 {
+    /**
+     * Record changes in the database to display in changelog
+     */
     public function onFlush(Event\OnFlushEventArgs $args)
     {
 

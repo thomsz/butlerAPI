@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class Login
 {
@@ -15,24 +16,28 @@ class Login
 
     public function try($credentials)
     {
-        $password = $credentials->password ?? null;
 
         if ($username = $credentials->username ?? false) {
             $entityManager = $this->entityManager;
             $userRepository = $entityManager->getRepository('App:User');
             $user = $userRepository->findOneBy(['username' => $username]);
+        } else {
+            return ['message' => 'Please provide a username'];
         }
 
         if (!$user) {
-            throw new \Exception('No username found');
-            return false;
+            return ['message' => 'Username was not found'];
         }
 
-        if ($user->getPassword() == $password) {
+        $password = $credentials->password ?? null;
+
+        if (!$password) {
+            return ['message' => 'Please provide a password'];
+        } else if ($user->getPassword() == $password) {
             $generator = new Generator();
             return $generator->accessToken($username);
         }
 
-        return false;
+        return ['message' => 'Credentials are incorrect'];
     }
 }
