@@ -23,6 +23,9 @@ class CustomerManager
         $this->validator = $validator;
     }
 
+    /**
+     * List customers by a given customer ID
+     */
     public function list_by_id($id)
     {
         $customer = $this->customerRepository->find($id);
@@ -36,6 +39,9 @@ class CustomerManager
         return $customer;
     }
 
+    /**
+     * List all customers. Default items per page is 10
+     */
     public function list($request)
     {
 
@@ -60,6 +66,9 @@ class CustomerManager
         return $pagerfanta->getCurrentPageResults();
     }
 
+    /**
+     * Update customer by ID
+     */
     public function update($id, $updatedCustomer)
     {
 
@@ -95,6 +104,9 @@ class CustomerManager
         return $customer;
     }
 
+    /**
+     * Create a new customer
+     */
     public function create($newCustomer)
     {
         $customer = new Customer();
@@ -126,6 +138,9 @@ class CustomerManager
         return $customer;
     }
 
+    /**
+     * Delete a customer by ID or email address
+     */
     public function delete($customer)
     {
         if ($id = $customer->id ?? false) {

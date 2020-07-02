@@ -15,6 +15,9 @@ class Tracker
         $this->trackerRepository = $trackerRepository;
     }
 
+    /**
+     * Load tracker
+     */
     public function Load($request)
     {
         $sortBy = $request->sort_by ?? 'id'; // id, userID, change, time

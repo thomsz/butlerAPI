@@ -33,7 +33,7 @@ class CustomersController extends AbstractController
 
         $customer = $customerManager->create($newCustomer);
 
-        if (is_string($customer)) {
+        if (is_string($customer) || is_array($customer)) {
             return new Response($customer, Response::HTTP_FORBIDDEN, ['Content-Type' => 'application/json']);
         }
 

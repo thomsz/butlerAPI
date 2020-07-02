@@ -17,10 +17,12 @@ class LoginController extends AbstractController
     {
         $credentials = json_decode($request->getContent());
 
-        if ($jwt = $login->try($credentials)) {
+        $jwt = $login->try($credentials);
+
+        if (is_string($jwt)) {
             return new Response($this->json(['token' => $jwt]));
         } else {
-            return new Response($this->json(['message' => 'Credentials are incorrect.']), Response::HTTP_UNAUTHORIZED);
+            return new Response($this->json($jwt), Response::HTTP_UNAUTHORIZED);
         }
     }
 }
